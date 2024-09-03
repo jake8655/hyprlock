@@ -896,7 +896,7 @@ void CHyprlock::onKey(uint32_t key, bool down) {
         m_bCtrl     = xkb_state_mod_name_is_active(m_pXKBState, XKB_MOD_NAME_CTRL, XKB_STATE_MODS_EFFECTIVE);
 
         handleKeySym(SYM);
-        if (SYM == XKB_KEY_BackSpace || SYM == XKB_KEY_Delete) // keys allowed to repeat
+        if (SYM == XKB_KEY_BackSpace || SYM == XKB_KEY_Delete || (m_bCtrl && (SYM == XKB_KEY_h ))) // keys allowed to repeat
             startKeyRepeat(SYM);
     }
 
@@ -909,7 +909,7 @@ void CHyprlock::handleKeySym(xkb_keysym_t sym) {
         Debug::log(LOG, "Clearing password buffer");
 
         m_sPasswordState.passBuffer = "";
-    } else if (SYM == XKB_KEY_Return || SYM == XKB_KEY_KP_Enter) {
+    } else if (SYM == XKB_KEY_Return || SYM == XKB_KEY_KP_Enter || (m_bCtrl && (SYM == XKB_KEY_m))) {
         Debug::log(LOG, "Authenticating");
 
         static auto* const PIGNOREEMPTY = (Hyprlang::INT* const*)g_pConfigManager->getValuePtr("general:ignore_empty_input");
@@ -920,7 +920,7 @@ void CHyprlock::handleKeySym(xkb_keysym_t sym) {
         }
 
         g_pAuth->submitInput(m_sPasswordState.passBuffer);
-    } else if (SYM == XKB_KEY_BackSpace || SYM == XKB_KEY_Delete) {
+    } else if (SYM == XKB_KEY_BackSpace || SYM == XKB_KEY_Delete || (m_bCtrl && (SYM == XKB_KEY_h))) {
         if (m_sPasswordState.passBuffer.length() > 0) {
             // handle utf-8
             while ((m_sPasswordState.passBuffer.back() & 0xc0) == 0x80)
